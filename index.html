@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canto Chronicle</title>
+    <script src="index.js"></script>
+</head>
+<body>
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <div id="header_div">
+        <div id="header">
+            <h1>Canto Chronicle</h1>
+            <h2>诗篇纪</h2>
+        </div>
+        <div id="time">
+            <div id="clock">--:--:--</div>
+            <div id="date">----/--/--</div>
+            
+        </div>
+        <div id="search">
+            <input type="text" id="searchInput" placeholder="搜索小说、游戏等...">
+            <button id="searchButtonStation">站内搜索</button>
+            <div class="web-search">
+                <button id="searchButtonWeb">全网搜索</button>
+                <ul class="search-engines">
+                    <li data-engine="google">Google</li>
+                    <li data-engine="bing">Bing</li>
+                    <li data-engine="baidu">百度</li>
+                </ul>
+            </div>
+        </div>
+        <div id="cat">
+            <img src="resource/cat.png" alt="猫咪" id="catImg" style="width: 120;height: 100px;">
+            <audio id="catSound" src="resource/catmeow.mp3"></audio>
+            <div id="catCounter">撸猫次数: 0</div>
+        </div>
+    </div>
+    <div id="main_content">
+        <div class="main_left">
+            <h2>最近更新</h2>
+            <ul class="two-columns">
+                <li>2025-XX-XX: 网站上线!</li>
+                <li>2025-XX-XX: 小说《龙与花》更新第2章</li>
+                <li>2025-XX-XX: 小说《龙与花》更新第2章</li>
+                <li>2025-XX-XX: 小说《龙与花》更新第2章</li>
+                <li>2025-XX-XX: 小说《龙与花》更新第2章</li>
+                <li>2025-XX-XX: 小说《龙与花》更新第2章</li>
+                <li>2025-XX-XX: 小说《龙与花》更新第2章</li>
+                <li>2025-XX-XX: 小说《龙与花》更新第2章</li>
+                <li>2025-XX-XX: 小说《龙与花》更新第2章</li>
+                <li>2025-XX-XX: 小说《龙与花》更新第2章</li>
+                <li>2025-XX-XX: 小说《龙与花》更新第2章</li>
+                <li><a href="novels.html" class="more-link">更多 >></a></li>
+            </ul>
+            <h2>今日推荐</h2>
+            <ul class="two-columns">
+                <li>小说:《龙与花》</li>
+                <li>小说:《龙与花》</li>
+                <li>小说:《龙与花》</li>
+                <li>小说:《龙与花》</li>
+                <li>小说:《龙与花》</li>
+                <li>小说:《龙与花》</li>
+                <li>小说:《龙与花》</li>
+                <li>小说:《龙与花》</li>
+                <li>小说:《龙与花》</li>
+                <li>小说:《龙与花》</li>
+                <li>小说:《龙与花》</li>
+                <li>小说:《龙与花》</li>
+                <li>音乐:《HOP》</li>
+            </ul>
+        </div>
+        <div class="main_right">
+            <h2>热门内容</h2>
+            <div class="time-selector">
+                <button class="active" data-time="today">今日</button>
+                <button data-time="month">近一月</button>
+                <button data-time="three-months">近三月</button>
+                <button data-time="year">近一年</button>
+            </div>
+            <h3>最热门小说</h3>
+            <ol>
+                <li>男人</li>
+                <li>也能</li>
+                <li>这么美丽吗</li>
+            </ol>
+            <h3>最热门音乐</h3>
+            <ol>
+                <li>HOP</li>
+                <li>HOP</li>
+                <li>HOP</li>
+            </ol>
+        </div>
+</div>
+    
+    <div id="nav_div">
+        <div class="content"><a href="index.html"><button>首页</button></a></div>
+        <div class="content"><a href="novels.html"><button>小说</button></a></div>
+        <div class="content"><a href="music.html"><button>音乐</button></a></div>
+        <div class="content"><a href="games.html"><button>游戏</button></a></div>
+        <div class="content"><a href="rank.html"><button>排名</button></a></div>
+        <div class="content"><a href="chain.html"><button>接龙</button></a></div>
+        <div class="content"><a href="mine.html"><button>我的</button></a></div>
+    </div>
+    <div id="pomodoro" class="content hide" style="margin: 0 25px;">
+            <button id="pomodoro-toggle" class="vertical" title="隐藏/显示"></button>
+            <button id="pomodoroPrev" class="pomodoro-small">&lt;&lt;</button>
+            <button id="pomodoroMinus" class="pomodoro-small">-</button>
+            <span id="pomodoroTime" style="font-size: 20px;">25:00</span>
+            <button id="pomodoroPlus" class="pomodoro-small">+</button>
+            <button id="pomodoroNext" class="pomodoro-small">&gt;&gt;</button>
+            <button id="pomodoroStart">开始</button>
+            <button id="pomodoroReset">重置</button></div> 
+    
+    
+    
+</body>
+</html>

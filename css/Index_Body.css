@@ -1,0 +1,20 @@
+@import url('../Index_Body.css');
+
+/* Overrides for music.html (ensure #searchInput minimum width and wrapping behavior) */
+#search {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex: 1 1 100px; /* 在空间不足时允许换行，但在有空间时尽量扩展，基准宽为100px */
+    min-width: 100px; /* 避免被压缩得比100px小 */
+}
+
+#searchInput {
+    width: 100%;
+    min-width: 100px; /* 严格不小于100px */
+    box-sizing: border-box;
+}
+
+/* 如果需要强制在极窄窗口中让搜索整行显示（换行），可以通过 search-wrapped 类触发 */
+#header_div.search-wrapped #search { flex-basis: 100% ; order: 3; }
+#header_div.search-wrapped #cat { order: 4; }
