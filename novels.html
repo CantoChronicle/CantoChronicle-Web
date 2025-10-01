@@ -4,67 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>小说 - Canto Chronicle</title>
-    <link rel="stylesheet" href="css/Index_Body.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/novels.css">
+    <script src="js/novels.js" defer></script>
 </head>
 <body>
-    <div id="header_div">
-        <div id="header"><h1>Canto Chronicle</h1><h2>诗篇纪</h2></div>
-        <div id="time"><div id="clock">--:--:--</div><div id="date">----年--月--日</div></div>
-        <div id="search">
-            <input id="searchInput" placeholder="搜索小说、游戏等...">
-            <div class="web-search"><button id="searchButtonWeb">全网搜索</button><div class="search-engines"></div></div>
-        </div>
-        <div id="cat"><img src="resource/cat.png" alt="猫咪" id="catImg" style="width: 120;height: 100px;"></div>
-    </div>
-
+<div id="headerbar"></div>
     <div id="main_content">
-        <div class="main_left">
-            <h2>最近更新</h2>
-            <ul class="two-columns">
-                <li>《示例小说 1》 - 更新章节</li>
-                <li>《示例小说 2》 - 更新章节</li>
-                <li>《示例小说 3》 - 更新章节</li>
-                <li>《示例小说 4》 - 更新章节</li>
-                <li>《示例小说 5》 - 更新章节</li>
-                <li>《示例小说 6》 - 更新章节</li>
-                <li>《示例小说 7》 - 更新章节</li>
-                <li>《示例小说 8》 - 更新章节</li>
-                <li>《示例小说 9》 - 更新章节</li>
-            </ul>
+        <div class="novels-main">
+            <div class="novels-title">小说</div>
+        <div class="novels-content">
+            <div class="novel-grid" id="novelList">
+            </div>
         </div>
-        <div class="main_right">
-            <h2>今日推荐</h2>
-            <ol>
-                <li>《推荐小说 A》</li>
-                <li>《推荐小说 B》</li>
-                <li>《推荐小说 C》</li>
-            </ol>
+        <div class="novels-content">
+            <div class="novel-grid" id="novelList">
+            </div>
+        </div>
         </div>
     </div>
 
-    <div id="nav_div">
-        <a href="Index.html">首页</a>
-        <a href="novels.html">小说</a>
-        <a href="music.html">音乐</a>
-        <a href="games.html">游戏</a>
-        <a href="rank.html">排行</a>
-        <a href="chain.html">接龙</a>
-        <a href="mine.html">我的</a>
-    </div>
-
-    
-    <div id="pomodoro" class="content">
-        <button id="pomodoro-toggle" title="隐藏/显示"></button>
-        <button id="pomodoroPrev" class="pomodoro-small">&lt;&lt;</button>
-        <button id="pomodoroMinus" class="pomodoro-small">-</button>
-        <span id="pomodoroTime" style="font-size: 20px;">25:00</span>
-        <button id="pomodoroPlus" class="pomodoro-small">+</button>
-        <button id="pomodoroNext" class="pomodoro-small">&gt;&gt;</button>
-        <button id="pomodoroStart">开始</button>
-        <button id="pomodoroReset">重置</button>
-    </div>
-
-    <script src="js/Index.js"></script>
-    
+<div id="navbar"></div>
+<script>
+    if (window.injectHeaderNav) {
+        window.injectHeaderNav();
+    } else {
+        fetch("nav.html").then(r => r.text()).then(html => { document.getElementById("navbar").innerHTML = html; });
+        fetch("header.html").then(r => r.text()).then(html => { document.getElementById("headerbar").innerHTML = html; });
+    }
+</script>
 </body>
 </html>

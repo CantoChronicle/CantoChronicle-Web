@@ -1,55 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!DOCTYPE html>
-    <html lang="zh-CN">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>我的 - Canto Chronicle</title>
-    <link rel="stylesheet" href="css/Index_Body.css">
-    </head>
-    <body>
-        <div id="header_div">
-            <div id="header"><h1>Canto Chronicle</h1><h2>诗篇纪</h2></div>
-            <div id="time"><div id="clock">--:--:--</div><div id="date">----年--月--日</div></div>
-            <div id="search">
-                <input id="searchInput" placeholder="搜索...">
-                <div class="web-search"><button id="searchButtonWeb">全网搜索</button><div class="search-engines"></div></div>
-            </div>
-            <div id="cat"><img src="resource/cat.png" alt="猫咪" id="catImg" style="width: 120;height: 100px;"></div>
-        </div>
+    <title>我的 - Canto Chronicle</title>
+    <link rel="stylesheet" href="index.css">
+    <script src="index.js" defer></script>
+</head>
+<body>
+<div id="headerbar"></div>
 
-        <div id="main_content">
-            <h1>我的页面</h1>
-            <p>个人信息、笔记和收藏放在这里。</p>
-        </div>
+    <div id="main_content">
+        <h1>我的</h1>
+        <p>仍在努力制作中</p>
+    </div>
 
-        <div id="nav_div">
-            <a href="Index.html">首页</a>
-            <a href="novels.html">小说</a>
-            <a href="music.html">音乐</a>
-            <a href="games.html">游戏</a>
-            <a href="rank.html">排行</a>
-            <a href="chain.html">接龙</a>
-            <a href="mine.html">我的</a>
-        </div>
-
-        
-        <div id="pomodoro" class="content">
-            <button id="pomodoro-toggle" title="隐藏/显示"></button>
-            <button id="pomodoroPrev" class="pomodoro-small">&lt;&lt;</button>
-            <button id="pomodoroMinus" class="pomodoro-small">-</button>
-            <span id="pomodoroTime" style="font-size: 20px;">25:00</span>
-            <button id="pomodoroPlus" class="pomodoro-small">+</button>
-            <button id="pomodoroNext" class="pomodoro-small">&gt;&gt;</button>
-            <button id="pomodoroStart">开始</button>
-            <button id="pomodoroReset">重置</button>
-        </div>
-
-        <script src="js/Index.js"></script>
-        
-    </body>
-    </html>
+<div id="navbar"></div>
+<script>
+    fetch("nav.html")
+    .then(res => res.text())
+    .then(html => {
+        document.getElementById("navbar").innerHTML = html;
+    });
+    fetch("header.html")
+    .then(res => res.text())
+    .then(html => {
+        document.getElementById("headerbar").innerHTML = html;
+    });
+</script>
+</body>
+</html>

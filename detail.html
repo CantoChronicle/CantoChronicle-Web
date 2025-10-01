@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>小说详情</title>
+     <link rel="stylesheet" href="css/common.css">
+     <link rel="stylesheet" href="css/novels.css">
+     <script src="index.js" defer></script>
+</head>
+<body>
+  <div id="headerbar"></div>
+    <div id="main_content">
+      <div class="novels-main">
+        <div class="novels-title"></div>
+        <div class="novels-content">
+          <div class="content-columns">
+            <div class="container" id="novelContainer">加载中...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<div id="navbar"></div>
+  <script>
+    async function loadNovel() {
+  // 从 URL 参数里获取小说 id，例如 novel.html?id=forest
+  const id = new URLSearchParams(window.location.search).get("id");
+
+  // 获取 novels.json 数据
+  const response = await fetch("novels.json");
+  const novels = await response.json();
+
+  // 找到对应 id 的小说
+  const novel = novels.find(n => n.id == id);
+
+  // 获取页面容器
+  const container = document.getElementById("novelContainer");
+
+  if (!novel) {
+    container.innerHTML = "<p>未找到小说</p>"; // 没找到小说时的提示
+    return;
+  }
+
+  // 把小说信息填充到页面（暂不显示封面）
+  container.innerHTML = `
+    <h1>${novel.title}</h1>
+    <p><strong>简介：</strong>${novel.desc}</p>
+    <h2>章节目录</h2>
+    <ul>
+      ${novel.chapters.map(ch => {
+        const encodedId = encodeURIComponent(novel.id);
+        const encodedChapter = encodeURIComponent(ch.file);
+        return `<li><a href="reader.html?novel=${encodedId}&chapter=${encodedChapter}">${ch.title}</a></li>`
+      }).join("")}
+    </ul>
+  `;
+}
+
+// 执行函数，加载数据（确保 header 注入完毕后）
+function ensureHeaderThenLoad() {
+  // header.html 注入
+  fetch('header.html').then(r => r.text()).then(h => document.getElementById('headerbar').innerHTML = h)
+  .finally(() => {
+    // navbar 注入
+    fetch('nav.html').then(r => r.text()).then(h => document.getElementById('navbar').innerHTML = h)
+    .finally(() => loadNovel());
+  });
+}
+
+ensureHeaderThenLoad();
+
+  </script>
+</body>
+</html>

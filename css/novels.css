@@ -1,0 +1,742 @@
+
+/* 全局盒模型帮助避免溢出计算错误 */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* 避免页面在极端情况下水平滚动导致元素跑到屏幕外。布局应自适应，但作为最后保险设置 overflow-x hidden */
+html, body { max-width: 100%; overflow-x: hidden; }
+body {
+    background-image: url('../resource/bg1.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    /* 固定背景（桌面），在移动端通过媒体查询回退为 scroll 以避免性能/渲染问题 */
+    background-attachment: fixed;
+}
+#header_div{
+    display: flex;
+    width: 100%;
+    height: auto; /* 允许根据内容换行时自适应高度 */
+    align-items: center;
+    justify-content: center; /* 水平居中所有内容 */
+    position: relative;
+    gap: 12px;
+    flex-wrap: wrap; /* 允许在窄屏时换行，避免重叠 */
+    padding: 8px 16px; /* 保持左右内边距，避免靠边溢出 */
+}
+#header_time {
+    display: flex;
+    align-items: center;
+    gap: 1vw;
+    white-space: nowrap; /* 不换行 */
+    flex: 0 1 auto; /* 可缩放但优先保持在一行 */
+    min-width: 0; /* 允许在 flex 容器中收缩 */
+}
+
+#header_time #header h1 {
+    margin: 0;
+    /* 增大标题在各视口的显示，更醒目 */
+    font-size: clamp(26px, 4.5vw, 44px);
+}
+#header_time #header h2 {
+    margin: 0 0 0 8px;
+    font-size: clamp(14px, 2.2vw, 22px);
+    opacity: 0.95;
+}
+
+#header_time #time {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-left: 1vw;
+    font-family: 'FZSS', sans-serif;
+    font-size: clamp(16px, 2.5vw, 40px); /* 时间也按视口缩放 */
+}
+#header {
+    color: rgb(0, 0, 0);
+    font-style: oblique;
+    font-weight: normal;
+    font-family: 'FZSS', sans-serif;
+    ;
+}
+
+#time {
+    min-width: 100px;
+    text-align: center;
+    font-size: 40px;
+    font-weight: bold;  /* 加粗 */
+    color: #000000;
+    margin-top: 15px; /* 增加上边距 */
+    margin-left: 50px;
+    margin-right: 50px;
+    font-family: 'FZSS';
+}
+
+#search {
+    flex: 1 1 240px;           /* 优先在空间不足时换行，但在足够空间时占比扩展 */
+    min-width: 120px;         /* 防止过度压扁内容 */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* 搜索框区域左对齐 */
+    margin-left: 20px;
+    position: relative; /* 为下拉菜单提供定位上下文 */
+}
+#search input, #search button {
+    /* 保证搜索区内元素随视口缩放（按钮也响应式） */
+    font-size: clamp(12px, 1.6vw, 18px);
+}
+
+#searchButtonStation, #searchButtonWeb {
+    padding: clamp(6px, 1.4vh, 16px) clamp(10px, 2.4vw, 20px);
+    font-size: clamp(12px, 1.6vw, 18px);
+    border-radius: 12px;
+    /* border width scales with viewport so border 看起来与按钮大小成比例 */
+    border: clamp(1px, 0.2vw, 2px) solid rgba(104,0,214,0.6);
+    background-clip: padding-box;
+}
+#search .web-search {
+    display: inline-block;
+    position: relative; /* 使下拉以 web-search 为参考定位 */
+}
+#searchInput {
+    flex: 1 1 auto;             /* 在 search 内可伸缩 */
+    width: 100%;
+    max-width: 600px;          /* 在大屏保留可读宽度 */
+    padding: 12px 14px;        /* 内边距稍微缩小以适配小屏 */
+    font-size: 18px;           /* 字体大小 */
+    border: none;              /* 去除默认边框 */
+    border-radius: 24px;       /* 圆角 */
+    background-color: #f6f6d6; /* 背景色 */
+    color: #333;               /* 字体颜色 */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08); /* 阴影 */
+    outline: none;             /* 去除选中时的蓝色边框 */
+    transition: box-shadow 0.2s;
+    min-width: 40%;              /* 允许按 flex 收缩，不引起溢出 */
+}
+#searchInput:focus {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18); /* 聚焦时阴影加深 */
+}
+
+#searchButtonStation:hover {
+    background-color: #ffec80;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+}
+#searchButtonStation {
+    /* 使用上方的响应式 padding/font-size/border 设置，不再在这里覆盖 */
+    border-radius: 12px;
+    background-color: #d1df0baf;
+    color:  rgb(104, 0, 214);
+    cursor: pointer;
+    margin-left: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: background 0.2s, box-shadow 0.2s;
+}
+
+#searchButtonWeb {
+    /* 使用上方的响应式 padding/font-size/border 设置，不再在这里覆盖 */
+    border-radius: 12px;
+    background-color: #d1df0baf;
+    color:  rgb(104, 0, 214);
+    cursor: pointer;
+    margin-left: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: background 0.2s, box-shadow 0.2s;
+    position: relative;  /* 为下拉菜单定位提供参考 */
+}
+#searchButtonWeb:hover {
+    background-color: #ffec80;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+}
+
+.search-engines {
+    position: absolute;
+    display: none;
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    padding: 6px 0;
+    margin: 6px 0 0 0;
+    list-style: none;
+    z-index: 1000;
+    top: 100%;  /* 位于按钮正下方 */
+    left: 0;    /* 对齐到 web-search 容器左侧（即按钮下方） */
+    right: auto;
+    min-width: 140px;
+}
+
+.search-engines.show {
+    display: block;
+}
+
+.search-engines li {
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.search-engines li:hover {
+    background: #f0f0f0;
+}
+
+#cat {
+    /* 将猫容器设为垂直堆叠：图片在上，计数在下居中 */
+    position: relative;
+    margin-left: auto;        /* 将其推到行尾（在有空间时） */
+    font-size: 18px;
+    color: #333;
+    z-index: 100;
+    flex: 0 0 auto;          /* 固定占位，不被压缩 */
+    padding: 6px; /* 让容器比图片大一些 */
+    display: flex;
+    flex-direction: column;   /* 竖直排列 img -> counter */
+    align-items: center;      /* 水平居中 */
+    gap: 6px;
+}
+#cat img {
+    /* 锁定图片大小与比例为固定值（不随视口变化） */
+    width: 120px;
+    height: 100px;
+    object-fit: contain; /* 保持图片纵横比，必要时有留白 */
+    transition: transform 0.2s;
+    cursor: pointer;
+    flex-shrink: 0;          /* 不允许图片被缩小 */
+}
+#cat img:active {
+    transform: scale(0.8); /* 按下时缩小为原来的80% */
+}
+#catCounter{
+    /* 计数显示在图片下方并居中 */
+    margin: 0;
+    font-size: clamp(12px, 1.8vw, 18px);
+    color:#333;
+    text-align: center;
+}
+
+
+#main_content {
+    width: 70%;
+    margin: 5% auto 20% auto; /* 顶部间距基于 header 实时高度 */
+    background: rgba(255,255,255,0.4);
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    padding: 32px;
+    font-size: 20px;
+    display: flex;           /* 新增：启用flex布局 */
+    gap: 10%;               /* 新增：左右间距 */
+}
+.main_left, .main_right {
+    flex: 1;                 /* 左右各占一半 */
+}
+.main_left {
+    flex: 2;
+    padding-right: 20px;
+    border-right: 2px solid #e0e0e0;
+}
+.main_right {
+    flex: 1;
+    padding-left: 20px;
+}
+.main_left h2, .main_right h2, .main_right h3 {
+    margin-top: 24px;
+    color: #4a4a4a;
+}
+.main_left ul, .main_right ol {
+    margin-left: 24px;
+    margin-bottom: 16px;
+}
+
+/* novels 列表：一行最多显示两列，窄屏时退为一列 */
+.novel-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    align-items: start;
+}
+
+@media (max-width: 768px) {
+    .novel-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 小说主区域：左侧大标题，右侧自动列布局（每列最小宽度约 30ch） */
+.novels-main {
+    display: grid;
+    grid-template-columns: clamp(80px, 8vw, 140px) 1fr; /* 左侧固定宽度，右侧扩展 */
+    gap: 20px;
+    align-items: start;
+}
+.novels-title {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 700;
+    padding-top: 6px;
+}
+/* novels-content container (no direct rules needed) */
+.content-columns {
+    display: grid;
+    grid-auto-flow: row; /* 从左到右、从上到下的排列（行主序） */
+    /* 允许列在窄屏时缩小：min 宽度 20ch，使列可以随屏幕缩小而变窄 */
+    grid-template-columns: repeat(2, minmax(20ch, 1fr));
+    gap: 16px;
+}
+
+/* 阅读页修复：确保章节选择与正文占满右侧整个列（防止正文只挤在左边小块） */
+.novels-content .content-columns > div {
+    /* 让内容容器撑满右侧可用空间 */
+    width: 100%;
+    min-width: 0; /* 允许在 flex/grid 中收缩 */
+}
+
+#content {
+    width: 100%;
+    box-sizing: border-box;
+    word-wrap: break-word;
+    /* 如果父布局是多列，强制在本单元跨列显示（如需要可解除注释） */
+    /* grid-column: 1 / -1; */
+}
+
+/* 当位于小说详情/阅读页面的内容区时，强制 content-columns 为单列，避免占位列导致正文只在左侧 */
+.novels-content .content-columns {
+    grid-template-columns: 1fr;
+}
+
+/* 详情页容器修复：确保简介/描述部分使用父列全部可用宽度并正确换行 */
+.novels-content .container {
+    width: 100%;
+    min-width: 0; /* 允许在 grid 中收缩，避免溢出造成早换行 */
+}
+.novels-content .container p {
+    margin: 0.6em 0;
+    white-space: normal;
+    word-break: break-word; /* 在长单词或无空格文本时允许换行 */
+}
+
+@media (max-width: 760px) {
+    /* 当容器变窄到每列不足 30ch 时，minmax 会使列退为单列，这里额外保证整体堆叠 */
+    .novels-main {
+        grid-template-columns: 1fr;
+    }
+    .content-columns {
+        grid-template-columns: 1fr;
+    }
+}
+
+.novel-card {
+    background: rgba(255,255,255,0.6);
+    padding: 14px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: transform 160ms ease, box-shadow 160ms ease;
+    width: 100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:84px;
+}
+
+.novel-card a, .novel-card { text-decoration:none; color:inherit; font-weight:600; }
+.novel-card a { display:flex; align-items:center; justify-content:center; width:100%; height:100%; }
+
+/* 让卡片显示为可点击的块，鼠标提示以及键盘友好 */
+.novel-card { display:block; cursor: pointer; }
+.novel-card:focus { outline: 2px solid rgba(104,0,214,0.6); }
+
+/* 阅读页专属：增宽 main_content，减小内边距以让正文更宽 */
+.reader-page #main_content {
+    width: 90%;
+    margin: 3% auto 6% auto;
+    padding: 18px;
+}
+
+.reader-page .novels-main { grid-template-columns: 150px 1fr; }
+.novel-card:hover { transform: translateY(-6px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+
+/* 在较窄屏幕上减小 padding 与字体，使卡片视觉变窄 */
+@media (max-width: 1024px) {
+    .novel-card { padding: 10px 12px; font-size: 0.98rem; }
+}
+@media (max-width: 520px) {
+    .novel-card { padding: 8px 10px; font-size: 0.95rem; }
+}
+
+/* 新的两列网格：左右两列垂直堆叠，向下延伸 */
+.two-columns-grid {
+    display: flex;
+    gap: 24px;
+}
+.two-columns-grid .col {
+    list-style-position: inside;
+    padding-left: 0;
+    margin: 0;
+}
+.two-columns-grid .col li {
+    padding: 4px 0;
+}
+.more-link {
+    color: rgb(104,0,214);
+    text-decoration: none;
+}
+
+.more-link:hover {
+    color: rgba(104,0,214,0.85);
+}
+.two-columns li {
+    margin-bottom: 10px;      /* 列表项之间的间距 */
+    break-inside: avoid;      /* 防止内容在列之间断开 */
+    padding: 5px 10px;        /* 列表项内边距 */
+    
+}
+/* 添加热门内容时间选择器样式 */
+.time-selector {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.time-selector button {
+    padding: 6px 12px;
+    font-size: 14px;
+}
+
+.time-selector button.active {
+    background-color: #f374afa6;
+}
+
+/* 通用工具条样式：适用于 header 中的 wallpaper-controls 和 reader 中的 reader-controls */
+.toolbar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.toolbar label { font-size: 14px; color: #333; }
+.toolbar select, .toolbar input[type="text"] {
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(0,0,0,0.08);
+    background: rgba(255,255,255,0.9);
+}
+.toolbar button {
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: rgba(104,0,214,0.08);
+    color: rgb(104,0,214);
+    border: 1px solid rgba(104,0,214,0.12);
+}
+
+.wallpaper-controls { white-space: nowrap; }
+
+
+
+#nav_div {
+    width: 100%;
+    height: 70px;
+    background-color:rgba(255,255,255,0.3);
+    display: flex;
+    gap: 6vw; /* 使用相对单位，随视口宽度调整间距 */
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    align-items: center; /* 垂直居中内容 */
+    justify-content: center; /* 水平居中内容 */
+    z-index: 999; /* 保证在最上层 */
+    backdrop-filter: blur(8px); /* 半透明磨砂效果，可选 */
+}
+
+/* 留言板已移除 */
+
+
+.content{
+    width:auto;
+    height:auto;
+    align-items: center;
+    justify-content: center;
+}
+/* 全局按钮：响应式尺寸，使用 vw/vh 作为参考，且限制最小/最大 padding 和字体 */
+button {
+    font-family: 'FZSS', sans-serif;
+    background-color: #d1df0baf;   /* 按钮背景色 */
+    color: rgb(104, 0, 214);                /* 文字颜色 */
+    /* 使用视口单位缩放：当屏幕变大时，按钮按比例变大；但用 min/max 保证边界 */
+    padding: clamp(4px, 1.2vh, 12px) clamp(8px, 2.4vw, 24px);
+    font-size: clamp(14px, 1.8vw, 18px);  /* 字体在 14-18px 之间，随视口宽度变化 */
+    border: none;                /* 去除边框 */
+    border-radius: 8px;          /* 圆角 */
+    cursor: pointer;             /* 鼠标悬停变为手型 */
+    transition: background 0.3s, transform 0.12s; /* 鼠标悬停时平滑变色 */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3); /* 按钮阴影 */
+    white-space: nowrap; /* 防止按钮文本换行 */
+}
+button:hover {
+    background-color: #f374afa6;   /* 鼠标悬停时的颜色 */
+}
+#pomodoro {
+    position: fixed;
+    right: 0;
+    bottom: 70px; /* 紧贴底部导航（导航高度 70px） */
+    z-index: 200;
+    background: rgba(255,255,255,0.85);
+    border-radius: 8px 16px 16px 8px; /* 左直角，右圆角 */
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: move;
+    transition: transform 0.3s ease; /* 平移动画 */
+    flex-wrap: nowrap;/* 防止按钮换行 */
+    min-height: 60px
+}
+
+/* 全局播放器容器：左下对齐，紧贴导航，可缩进 */
+#global-player {
+    position: fixed;
+    left: 0;
+    bottom: 70px; /* 紧贴底部导航 */
+    width: 360px; /* 宽度可调整 */
+    z-index: 998;
+    display: block;
+    transition: transform 0.3s ease;
+    pointer-events: auto;
+}
+
+/* 缩进状态：向左缩进，仅保留小把手宽度 */
+#global-player.gp-hide {
+    transform: translateX(calc(-100% + 40px));
+}
+
+/* 折叠/展开按钮（固定在左下，和播放器同高线对齐） */
+#global-player-toggle {
+    position: fixed;
+    left: 0;
+    bottom: 70px; /* 与播放器对齐 */
+    width: 40px;
+    height: 40px;
+    z-index: 999;
+    border: none;
+    background: rgba(255,255,255,0.9);
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+/* APlayer 已移除 */
+
+#pomodoro.hide {
+    transform: translateX(100%); /* 平移到屏幕外 */
+}
+
+#pomodoro-toggle {
+    position: absolute;
+    left: 0; /* 紧贴左边 */
+    top: 0;
+    width: 28px;
+    height: 100%;
+    background: #e6e6fa;
+    border-radius: 8px 0 0 8px; /* 左上、左下圆角 */
+    border: none;
+    cursor: pointer;
+    box-shadow: inset -1px 0 0 rgba(0,0,0,0.1); /* 内部分隔线 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px; /* 缩小字体 */
+    z-index: 201;
+    padding: 0;
+}
+
+#pomodoro.hide #pomodoro-toggle {
+    left: 0;
+    border-radius: 8px 0 0 8px;
+}
+
+/* 番茄钟切换按钮竖向排列：使按钮文本纵向显示 */
+#pomodoro-toggle.vertical {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    padding: 4px 2px;
+}
+
+.pomodoro-small {
+    padding: 4px 10px;
+    font-size: 16px;
+    border-radius: 6px;
+    margin: 0 2px;
+    background-color: #e6e6fa;
+    color: #333;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.pomodoro-small:hover {
+    background-color: #ffe4e1;
+}
+
+#pomodoroStart,#pomodoroReset {
+    padding: 8px 15px;
+    font-size: 16px;
+    border-radius: 6px;
+    background-color: #d1df0baf;
+    color: rgb(104, 0, 214);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    transition: background-color 0.2s, box-shadow 0.2s;
+    white-space: nowrap /* 防止按钮文本换行 */
+}
+
+
+/* 手机端适配 */
+@media (max-width: 768px) {
+    body {
+        background-size: cover;
+        background-position: center;
+    /* 移动端禁用 fixed，提升平滑性和兼容性 */
+    background-attachment: scroll;
+    }
+
+    #header_div {
+        flex-wrap: wrap;
+        height: auto;
+        padding: 10px;
+    }
+
+    #time {
+        font-size: 32px;
+        margin: 10px 0;
+    }
+
+    #search {
+        flex: 1 1 100%;
+        margin: 10px 0;
+        justify-content: center;
+        min-width: 0; /* 避免在窄屏时因最小宽度引起滚动 */
+    }
+
+    /* 当 cat 与 search 发生碰撞（空间不足）时，使 cat 换行到下一行 */
+    #header_div.search-wrapped #cat {
+        order: 4; /* 换行到后面 */
+        width: 100%;
+        justify-content: flex-start;
+        margin-left: 0;
+    }
+
+/* 当 search 换行时，让 header_time 占据整行 */
+#header_div.search-wrapped #header_time {
+    flex-basis: 100%;
+    flex: 0 0 100%;
+    justify-content: space-between; /* header 在左，time 在右 */
+    padding-right: 1rem;
+}
+
+    /* 窄屏时让 search 优先换行，防止 header/time/cat 重叠 */
+    #search { order: 3; flex: 1 1 100%; }
+    #time { order: 2; margin-left: 3vw !important; }
+    #header { order: 1; padding-left: 5vw; }
+
+    /* 取消 cat 的绝对定位，变成正常流的一部分，避免重叠 */
+    #cat { position: static; margin-left: auto; order: 4; flex: 0 0 auto; }
+
+    /* 强制所有头部元素不重叠：设置最小宽度约束 */
+    #header, #time, #search, #cat { min-width: 0; }
+
+    /* 在手机上将 header 左侧间距减小为 5vw，使内容更靠近左侧 */
+    #header_div {
+    padding-left: 5vw !important;
+    padding-right: 5vw !important;
+    }
+
+    /* 让 time 在手机上相对于 header 的左侧保持 3vw 的间距 */
+    #time {
+    margin-left: 3vw !important;
+    }
+
+    #searchInput {
+        width: 80%;
+        font-size: 16px;
+        padding: 10px 14px;
+    }
+
+    #searchButton {
+        padding: 10px 16px;
+        font-size: 16px;
+    }
+
+    #main_content {
+        width: 95%;
+        flex-direction: column;
+        gap: 20px;
+        margin-top: 80px;
+        padding: 16px;
+    }
+
+    .main_left, .main_right {
+        flex: none;
+        padding: 0;
+        border: none;
+    }
+
+    #nav_div {
+        gap: 5%;
+        height: 60px;
+        padding: 0 10px;
+    }
+
+    /* 手机端按钮微调：使用 clamp 保证最小可点击区域 */
+    button {
+        font-size: clamp(13px, 3.5vw, 16px);
+        padding: clamp(6px, 1.6vh, 10px) clamp(8px, 4vw, 14px);
+    }
+
+    /* （保留在此处：针对 max-width:768px 的样式） */
+
+    /* 番茄钟在手机上缩小并靠边 */
+    #pomodoro {
+        transform: scale(0.85);
+        transform-origin: bottom right;
+        right: 10px;
+        bottom: 10px;
+    }
+    #pomodoro.hide {
+        transform: translateX(100%) scale(0.85);
+    }
+}
+
+/* 更小屏幕（例如部分小手机）上强制将底部导航按钮缩到最小值以节省空间 */
+@media (max-width: 420px) {
+    #nav_div { gap: 3vw; height: 56px; }
+    /* 对 nav 下的 a>button 做更具体的覆盖，保证最低 padding 与字体 */
+    #nav_div .content a > button,
+    #nav_div .content button {
+        display: inline-block;
+        padding: 4px 8px !important; /* 强制最小 */
+        font-size: 12px !important;
+        line-height: 1; /* 减少高度占用 */
+        min-width: 0; /* 允许按钮更窄 */
+        max-width: 80px; /* 防止超宽文本撑开 */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+/* 针对较多中小屏设备（例如 480-520px 宽度）再做一次收紧，保证按钮在这些屏幕上也足够小 */
+@media (max-width: 520px) {
+    #nav_div { gap: 4vw; height: 58px; }
+    #nav_div .content a > button,
+    #nav_div .content button {
+        padding: 6px 10px !important;
+        font-size: 13px !important;
+        min-width: 0;
+        max-width: 76px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}

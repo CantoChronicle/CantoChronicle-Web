@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>小说阅读</title>
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/novels.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="index.js" defer></script>
+</head>
+<body class="reader-page">
+  <div id="headerbar"></div>
+
+  <div id="main_content">
+    <div class="novels-main">
+      <h1 id="novelTitle">正在加载小说...</h1>
+
+      <div class="toolbar">
+        <button id="decFont">A-</button>
+        <button id="incFont">A+</button>
+        <button id="resetFont">重置</button>
+        <label for="readerBgSelect">背景：</label>
+        <select id="readerBgSelect">
+          <option value="">默认</option>
+          <option value="#ffffff">白</option>
+          <option value="#f4ecd8">米色</option>
+          <option value="#222222">深色</option>
+        </select>
+      </div>
+
+      <select id="chapterSelect"></select>
+      <div id="content">正在加载章节……</div>
+    </div>
+  </div>
+
+  <div id="navbar"></div>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const novelId = params.get("novel");
+    const chapterParam = params.get("chapter");
+
+    const titleEl = document.getElementById("novelTitle");
+    const selectEl = document.getElementById("chapterSelect");
+    const contentEl = document.getElementById("content");
+
+    let novelData = null; // 存放当前小说数据
+
+    // 加载小说信息和章节
+    async function loadNovel() {
+      const novels = await (await fetch("novels.json")).json();
+      const novel = novels.find(n => n.id == novelId);
+      if (!novel) { titleEl.textContent = "未找到小说"; return; }
+
+      novelData = novel;
+      titleEl.textContent = novel.title;
+
+      // 生成章节下拉
+      selectEl.innerHTML = "";
+      novel.chapters.forEach(ch => {
+        const opt = new Option(ch.title, ch.file);
+        selectEl.add(opt);
+      });
+
+      // 默认章节
+      const defaultChapter = chapterParam || novel.chapters[0].file;
+      selectEl.value = defaultChapter;
+      loadChapter(defaultChapter);
+
+      // 切换事件
+      selectEl.onchange = () => loadChapter(selectEl.value);
+    }
+
+    // 加载章节内容
+    async function loadChapter(file) {
+      try {
+        const folder = novelData.folder || novelData.id;
+        const path = `novels/${encodeURIComponent(folder)}/${encodeURIComponent(file)}`;
+        const text = await (await fetch(path)).text();
+        contentEl.innerHTML = marked.parse(text);
+      } catch (err) {
+        contentEl.textContent = "加载失败：" + err;
+      }
+    }
+
+    // 字体和背景设置
+    function applyReaderSettings() {
+      const size = +localStorage.getItem('readerFontSize') || 20;
+      contentEl.style.fontSize = size + 'px';
+
+      const bg = localStorage.getItem('readerBg') || '';
+      const main = document.getElementById('main_content');
+      main.style.backgroundColor = bg;
+
+      contentEl.style.color = isDark(bg) ? '#fff' : '';
+    }
+
+    function isDark(color) {
+      if (!color.startsWith('#')) return false;
+      const hex = color.slice(1);
+      const [r,g,b] = [0,2,4].map(i => parseInt(hex.substr(i,2),16));
+      return (0.2126*r + 0.7152*g + 0.0722*b) < 100;
+    }
+
+    function bindControls() {
+      document.getElementById('incFont').onclick = () => changeSize(2);
+      document.getElementById('decFont').onclick = () => changeSize(-2);
+      document.getElementById('resetFont').onclick = () => {
+        localStorage.clear(); applyReaderSettings();
+      };
+      document.getElementById('readerBgSelect').onchange = e => {
+        localStorage.setItem('readerBg', e.target.value);
+        applyReaderSettings();
+      };
+    }
+
+    function changeSize(delta) {
+      const cur = +localStorage.getItem('readerFontSize') || 20;
+      const next = Math.max(12, Math.min(40, cur + delta));
+      localStorage.setItem('readerFontSize', next);
+      applyReaderSettings();
+    }
+
+    async function loadHeaderNav() {
+      if (window.injectHeaderNav) {
+        await window.injectHeaderNav();
+      } else {
+        document.getElementById('headerbar').innerHTML = await (await fetch('header.html')).text();
+        document.getElementById('navbar').innerHTML = await (await fetch('nav.html')).text();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      bindControls();
+      applyReaderSettings();
+      await loadHeaderNav();
+      await loadNovel();
+    });
+
+  </script>
+</body>
+</html>

@@ -1,21 +1,24 @@
 window.onload = function() {
-    // 清理遗留的留言板数据（localStorage）
+    // 安全地清理遗留的留言板数据（localStorage）
     try { localStorage.removeItem('guestbook'); } catch (e) { /* ignore */ }
+
+    // 猫咪交互：如果页面包含相关节点才初始化，避免在无该元素的页面报错
     const catImg = document.getElementById('catImg');
     const catSound = document.getElementById('catSound');
     const catCounter = document.getElementById('catCounter');
-    // 读取本地保存的次数，没有则为 0
-    let count = Number(localStorage.getItem('catCount')) || 0;
-    catCounter.textContent = `撸猫次数:${count}`;
-
-    catImg.addEventListener('mousedown', () => {
-        catSound.currentTime = 0;
-        catSound.play();
-        count++;
+    if (catImg && catSound && catCounter) {
+        // 读取本地保存的次数，没有则为 0
+        let count = Number(localStorage.getItem('catCount')) || 0;
         catCounter.textContent = `撸猫次数:${count}`;
-        // 保存到本地
-        localStorage.setItem('catCount', count);
-    });
+
+        catImg.addEventListener('mousedown', () => {
+            try { catSound.currentTime = 0; catSound.play(); } catch (e) { /* ignore audio errors */ }
+            count++;
+            catCounter.textContent = `撸猫次数:${count}`;
+            // 保存到本地
+            try { localStorage.setItem('catCount', count); } catch (e) { /* ignore */ }
+        });
+    }
 
     // 时间显示模块
     const timeDiv = document.getElementById('time');
@@ -35,49 +38,82 @@ window.onload = function() {
     setInterval(updateTime, 1000);
     updateTime();
 
-    // 添加搜索引擎切换功能
-    document.getElementById('searchButtonWeb').addEventListener('click', function() {
-        const engineList = document.querySelector('.search-engines');
-        engineList.classList.toggle('show');
-    });
+    
+    // 添加搜索相关交互，仅在相关 DOM 存在时绑定
+    const searchButtonWeb = document.getElementById('searchButtonWeb');
+    const searchEngines = document.querySelector('.search-engines');
+    if (searchButtonWeb && searchEngines) {
+        searchButtonWeb.addEventListener('click', function() {
+            searchEngines.classList.toggle('show');
+        });
+    }
 
 // 搜索引擎选择处理
-    document.querySelector('.search-engines').addEventListener('click', function(e) {
-        if (e.target.tagName === 'LI') {
-            const engine = e.target.dataset.engine;
-            const searchText = document.getElementById('searchInput').value;
-            let searchUrl;
-        
-            switch(engine) {
-                case 'google':
-                searchUrl = `https://www.google.com/search?q=${searchText}`;
-                break;
-                case 'bing':
-                searchUrl = `https://www.bing.com/search?q=${searchText}`;
-                break;
-                case 'baidu':
-                searchUrl = `https://www.baidu.com/s?wd=${searchText}`;
-                break;
+    if (searchEngines) {
+        searchEngines.addEventListener('click', function(e) {
+            if (e.target.tagName === 'LI') {
+                const engine = e.target.dataset.engine;
+                const searchInput = document.getElementById('searchInput');
+                const searchText = searchInput ? searchInput.value : '';
+                let searchUrl;
+
+                switch(engine) {
+                    case 'google':
+                        searchUrl = `https://www.google.com/search?q=${encodeURIComponent(searchText)}`;
+                        break;
+                    case 'bing':
+                        searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(searchText)}`;
+                        break;
+                    case 'baidu':
+                        searchUrl = `https://www.baidu.com/s?wd=${encodeURIComponent(searchText)}`;
+                        break;
+                }
+
+                if (searchUrl) window.open(searchUrl, '_blank');
+                searchEngines.classList.remove('show');
             }
-        
-        if (searchUrl) window.open(searchUrl, '_blank');
-            document.querySelector('.search-engines').classList.remove('show');
-        }
+        });
+    }
+
+    // 站内搜索（在 header.html 中有 #searchInput 和 #searchButtonStation）
+    const stationBtn = document.getElementById('searchButtonStation');
+    const stationInput = document.getElementById('searchInput');
+    function doStationSearch() {
+        const q = stationInput ? stationInput.value.trim() : '';
+        if (!q) return;
+        // 跳转到小说列表页并带上搜索参数
+        window.location.href = `novels.html?search=${encodeURIComponent(q)}`;
+    }
+    if (stationBtn) stationBtn.addEventListener('click', doStationSearch);
+    if (stationInput) stationInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') doStationSearch();
     });
 
+    // 公共函数：注入 header 与 nav，返回 Promise
+    window.injectHeaderNav = function injectHeaderNav() {
+        return fetch('header.html').then(r => r.text()).then(h => { document.getElementById('headerbar') && (document.getElementById('headerbar').innerHTML = h); })
+        .then(() => fetch('nav.html').then(r => r.text()).then(h => { document.getElementById('navbar') && (document.getElementById('navbar').innerHTML = h); }))
+        .then(() => {
+            // 调整 header 重叠相关布局
+            try { ensureHeaderNoOverlap(); } catch (e) { /* ignore */ }
+        });
+    };
 // 热门内容时间筛选
-    document.querySelector('.time-selector').addEventListener('click', function(e) {
-        if (e.target.tagName === 'BUTTON') {
-        // 移除其他按钮的active类
-            this.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
-        // 添加当前按钮的active类
-            e.target.classList.add('active');
-        
-        // 这里可以根据不同时间段加载不同的热门内容
-            const timeRange = e.target.dataset.time;
-            loadHotContent(timeRange);
-        }
-    });
+    const timeSelector = document.querySelector('.time-selector');
+    if (timeSelector) {
+        timeSelector.addEventListener('click', function(e) {
+            if (e.target.tagName === 'BUTTON') {
+                // 移除其他按钮的active类
+                this.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+                // 添加当前按钮的active类
+                e.target.classList.add('active');
+
+                // 根据不同时间段加载不同的热门内容
+                const timeRange = e.target.dataset.time;
+                loadHotContent(timeRange);
+            }
+        });
+    }
 
     function loadHotContent(timeRange) {
     // 这里添加加载不同时间范围热门内容的逻辑
@@ -86,15 +122,22 @@ window.onload = function() {
 
 
 
-    // 番茄钟模块
-    let isPaused = false;
-    let pomodoroTime = 25 * 60;
-    let pomodoroInterval = null;
-    const pomodoroTimeSpan = document.getElementById('pomodoroTime');
-    const pomodoroStartBtn = document.getElementById('pomodoroStart');
-    const pomodoroResetBtn = document.getElementById('pomodoroReset');
-    const pomodoroPlusBtn = document.getElementById('pomodoroPlus');
-    const pomodoroMinusBtn = document.getElementById('pomodoroMinus');
+    // 番茄钟模块：仅在页面包含 #pomodoro 时初始化
+    const pomodoroRoot = document.getElementById('pomodoro');
+    if (pomodoroRoot) {
+        let isPaused = false;
+        let pomodoroTime = 25 * 60;
+        let pomodoroInterval = null;
+        const pomodoroTimeSpan = document.getElementById('pomodoroTime');
+        const pomodoroStartBtn = document.getElementById('pomodoroStart');
+        const pomodoroResetBtn = document.getElementById('pomodoroReset');
+        const pomodoroPlusBtn = document.getElementById('pomodoroPlus');
+        const pomodoroMinusBtn = document.getElementById('pomodoroMinus');
+
+        // 如果关键节点缺失，跳过初始化以避免后续错误
+        if (!pomodoroTimeSpan || !pomodoroStartBtn || !pomodoroResetBtn || !pomodoroPlusBtn || !pomodoroMinusBtn) {
+            return;
+        }
 
     function updatePomodoroDisplay() {
         const min = String(Math.floor(pomodoroTime / 60)).padStart(2, '0');
@@ -163,8 +206,8 @@ window.onload = function() {
         updatePomodoroDisplay();
     };
 
-    const pomodoroPrevBtn = document.getElementById('pomodoroPrev');
-    const pomodoroNextBtn = document.getElementById('pomodoroNext');
+        const pomodoroPrevBtn = document.getElementById('pomodoroPrev');
+        const pomodoroNextBtn = document.getElementById('pomodoroNext');
 
     pomodoroPrevBtn.onclick = function() {
         pomodoroTime = Math.max(0, pomodoroTime - 20 * 60);
@@ -182,7 +225,7 @@ window.onload = function() {
 
 
 // 番茄钟拖动功能
-    const pomodoro = document.getElementById('pomodoro');
+        const pomodoro = pomodoroRoot;
     let isDragging = false, dragOffsetX = 0, dragOffsetY = 0;
 
     pomodoro.addEventListener('mousedown', function(e) {
@@ -229,11 +272,12 @@ window.onload = function() {
     });
 
 // 番茄钟隐藏/显示功能
-    let isHidden = true; // 初始为隐藏状态，使页面打开时番茄钟处于缩进
-    const pomodoroToggle = document.getElementById('pomodoro-toggle');
+        let isHidden = true; // 初始为隐藏状态，使页面打开时番茄钟处于缩进
+        const pomodoroToggle = document.getElementById('pomodoro-toggle');
+        if (!pomodoroToggle) return;
     
     // 根据初始隐藏状态设置切换按钮文本与类
-    pomodoroToggle.textContent = isHidden ? '打开番茄钟' : '收起番茄钟';
+    pomodoroToggle.textContent = isHidden ? '番茄钟' : '收起';
     if (isHidden) {
         pomodoro.classList.add('hide');
         // 保证初始样式与隐藏状态一致：靠右并贴近导航
@@ -249,13 +293,13 @@ window.onload = function() {
         isHidden = !isHidden;
         if (isHidden) {
             pomodoro.classList.add('hide');
-            pomodoroToggle.textContent = '打开番茄钟';
+            pomodoroToggle.textContent = '番茄钟';
             // 保留当前的 top 值，设置 right: 0
             pomodoro.style.right = '0';
             pomodoro.style.bottom = pomodoro.style.top ? `calc(100vh - ${pomodoro.style.top} - ${pomodoro.offsetHeight}px)` : '70px';
         } else {
             pomodoro.classList.remove('hide');
-            pomodoroToggle.textContent = '收起番茄钟';
+            pomodoroToggle.textContent = '收起';
             // 恢复显示时的位置，保持拖动的 top 值
             pomodoro.style.right = pomodoro.style.top ? '' : '0';
             pomodoro.style.bottom = pomodoro.style.top ? `calc(100vh - ${pomodoro.style.top} - ${pomodoro.offsetHeight}px)` : '70px';
@@ -264,8 +308,31 @@ window.onload = function() {
         pomodoro.style.left = '';
         
     };
+    // 关闭 pomodoroRoot 的 if 块
+    }
     updatePomodoroDisplay();
 };
+// 防御性清理：如果页面上仍有指向 dragon_and_flower.html 或 detail.html?id=dragon_and_flower 的链接（例如 live-server 注入或缓存导致），在 DOMContentLoaded 后把它们替换为纯文本
+document.addEventListener('DOMContentLoaded', function () {
+    try {
+        const container = document.getElementById('main_content');
+        if (!container) return;
+        const anchors = container.querySelectorAll('a');
+        anchors.forEach(a => {
+            const href = a.getAttribute('href') || '';
+            if (href.includes('dragon_and_flower')) {
+                const txt = document.createTextNode(a.textContent || '龙与花');
+                a.parentNode && a.parentNode.replaceChild(txt, a);
+            }
+        });
+    } catch (e) {
+        /* ignore */
+    }
+});
+
+// Wallpaper feature removed: previously there was code here to persist and apply site wallpapers.
+// Clean up any stored value to avoid carrying stale settings.
+try { localStorage.removeItem('siteWallpaper'); } catch (e) { /* ignore */ }
 
 // ...existing code...
 
@@ -280,18 +347,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 获取页面中所有列表项
     const listItems = document.querySelectorAll('li');
-    listItems.forEach(li => {
-        li.innerHTML = li.innerHTML.replace(novelRegex, (match, novelName) => {
-            // 如果有对应的页面就链接到该页面，否则链接为空（可自行修改逻辑）
-            const url = novelPages[novelName] ? novelPages[novelName] : "#";
-            return `<a href="${url}">${match}</a>`;
+    // 在首页（index.html 或 根路径）不进行自动链接替换，避免把首页的纯文本变成链接
+    const path = window.location.pathname || '';
+    const isIndex = path.endsWith('/index.html') || path.endsWith('/Index.html') || path === '/' || path === '';
+    if (!isIndex) {
+        listItems.forEach(li => {
+            li.innerHTML = li.innerHTML.replace(novelRegex, (match, novelName) => {
+                // 如果有对应的页面就链接到该页面，否则链接为空（可自行修改逻辑）
+                const url = novelPages[novelName] ? novelPages[novelName] : "#";
+                return `<a href="${url}">${match}</a>`;
+            });
         });
-    });
+    }
 
     // 将现有 .two-columns 列表重构为左右两个独立垂直列表（向下延伸，取消内部滚动）
     const twoCols = document.querySelectorAll('.two-columns');
     twoCols.forEach((origUl, idx) => {
         const items = Array.from(origUl.querySelectorAll('li'));
+
+        // 如果存在任何一行的文本（去掉日期等）少于20字符，则整个列表切换为单列
+        const hasShortLine = items.some(li => {
+            // 只针对文本内容长度进行判断
+            const text = li.textContent.trim().replace(/\s+/g, ' ');
+            return text.length < 20;
+        });
 
         // 创建容器和两列 ul
         const wrapper = document.createElement('div');
@@ -301,34 +380,32 @@ document.addEventListener('DOMContentLoaded', function () {
         const rightUl = document.createElement('ul');
         rightUl.className = 'col';
 
-        // 特殊处理：如果这是 main_left 下的第一个 two-columns（最近更新）
-        if (origUl.closest('.main_left') && origUl === document.querySelector('.main_left .two-columns')) {
-            // 确保最近更新总共 10 条：左 5，右 4 + 更多
-            const maxItems = 9; // 真正的内容条数（不包含更多）
-            const contentItems = items.slice(0, maxItems);
-            // 左边放前 5 条
-            const leftCount = 5;
-            for (let i = 0; i < Math.min(leftCount, contentItems.length); i++) {
-                leftUl.appendChild(contentItems[i]);
+        // 如果检测到短行，我们把所有条目放到左列（单列展示），但在 main_left 的“最近更新”场景保留“更多”链接
+        if (hasShortLine) {
+            if (origUl.closest('.main_left') && origUl === document.querySelector('.main_left .two-columns')) {
+                const maxItems = 9; // 与之前逻辑一致，只显示前 9 条内容并在结尾显示更多链接
+                const contentItems = items.slice(0, maxItems);
+                contentItems.forEach(it => leftUl.appendChild(it));
+                const moreLi = document.createElement('li');
+                moreLi.innerHTML = `<a href="novels.html" class="more-link">更多 &gt;&gt;</a>`;
+                leftUl.appendChild(moreLi);
+            } else {
+                // 直接把所有条目加入左列
+                items.forEach(it => leftUl.appendChild(it));
             }
-            // 右边放接下来的 4 条
-            for (let i = leftCount; i < contentItems.length; i++) {
-                rightUl.appendChild(contentItems[i]);
-            }
-            // 最后一条为 更多 链接
-            const moreLi = document.createElement('li');
-            moreLi.innerHTML = `<a href="novels.html" class="more-link">更多 &gt;&gt;</a>`;
-            rightUl.appendChild(moreLi);
+            wrapper.appendChild(leftUl);
+            wrapper.appendChild(rightUl);
+            wrapper.classList.add('single-column');
         } else {
             // 默认行为：均匀分配到两列（先填左再填右），不使用横向分页
             const half = Math.ceil(items.length / 2);
             items.slice(0, half).forEach(it => leftUl.appendChild(it));
             items.slice(half).forEach(it => rightUl.appendChild(it));
+            wrapper.appendChild(leftUl);
+            wrapper.appendChild(rightUl);
         }
 
         // 用 wrapper 替换原 ul
-        wrapper.appendChild(leftUl);
-        wrapper.appendChild(rightUl);
         origUl.replaceWith(wrapper);
     });
 });
@@ -371,3 +448,37 @@ window.addEventListener('resize', function () {
 });
 
 // ...existing code...
+  async function loadNovels() {
+  // 从 novels.json 文件获取小说数据
+  const response = await fetch("novels.json");
+  const novels = await response.json();
+
+  // 找到网页中存放小说列表的元素
+  const listEl = document.getElementById("novelList");
+  const searchInput = document.getElementById("search");
+
+  // 定义一个函数，用来渲染列表
+  function render(filter="") {
+    listEl.innerHTML = ""; // 先清空列表
+    novels
+      .filter(n => n.title.includes(filter)) // 过滤：只保留标题包含搜索词的小说
+      .forEach(novel => { // 遍历剩下的小说
+        const div = document.createElement("div"); // 创建一个 div
+        div.className = "novel"; // 设置 div 的样式类
+        div.innerHTML = `
+          <img src="${novel.cover}" alt="${novel.title}">
+          <a href="novel.html?id=${novel.id}">${novel.title}</a>
+        `;
+        listEl.appendChild(div); // 把 div 加到列表里
+      });
+  }
+
+  render(); // 初始渲染全部小说
+
+  // 当用户在搜索框输入文字时，重新渲染
+  searchInput.addEventListener("input", () => render(searchInput.value.trim()));
+}
+
+// 调用函数，启动加载
+loadNovels();
+

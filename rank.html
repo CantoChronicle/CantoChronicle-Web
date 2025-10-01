@@ -4,37 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>排行 - Canto Chronicle</title>
-    <link rel="stylesheet" href="css/Index_Body.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="index.css">
+    <script src="index.js" defer></script>
 </head>
 <body>
     <div id="header_div">
-        <div id="header"><h1>Canto Chronicle</h1><h2>诗篇纪</h2></div>
-        <div id="time"><div id="clock">--:--:--</div><div id="date">----年--月--日</div></div>
-        <div id="search">
-            <input id="searchInput" placeholder="搜索排行、小说等...">
-            <div class="web-search"><button id="searchButtonWeb">全网搜索</button><div class="search-engines"></div></div>
+        <div id="header_time">
+            <div id="header">
+                <h1>Canto Chronicle</h1>
+                <h2>诗篇纪</h2>
+            </div>
+            <div id="time">
+                <div id="clock">--:--:--</div>
+                <div id="date">----/--/--</div>
+            </div>
         </div>
-        <div id="cat"><img src="resource/cat.png" alt="猫咪" id="catImg" style="width: 120;height: 100px;"></div>
+        <div id="search">
+            <input type="text" id="searchInput" placeholder="搜索内容...">
+            <button id="searchButtonStation">站内搜索</button>
+            <div class="web-search">
+                <button id="searchButtonWeb">全网搜索</button>
+                <ul class="search-engines">
+                    <li data-engine="google">Google</li>
+                    <li data-engine="bing">Bing</li>
+                    <li data-engine="baidu">百度</li>
+                </ul>
+            </div>
+        </div>
+        <div id="cat">
+            <img src="resource/cat.png" alt="猫咪" id="catImg">
+            <audio id="catSound" src="resource/catmeow.mp3"></audio>
+            <div id="catCounter">撸猫次数: 0</div>
+        </div>
     </div>
 
     <div id="main_content">
-        <h1>排行榜</h1>
-        <p>热门榜单、热度排行。</p>
+        <h1>排行</h1>
+        <p>仍在努力制作中</p>
     </div>
 
     <div id="nav_div">
-        <a href="Index.html">首页</a>
-        <a href="novels.html">小说</a>
-        <a href="music.html">音乐</a>
-        <a href="games.html">游戏</a>
-        <a href="rank.html">排行</a>
-        <a href="chain.html">接龙</a>
-        <a href="mine.html">我的</a>
+        <div class="content"><a href="index.html"><button>首页</button></a></div>
+        <div class="content"><a href="novels.html"><button>小说</button></a></div>
+        <div class="content"><a href="works.html"><button>作品</button></a></div>
+        <div class="content"><a href="rank.html"><button>排名</button></a></div>
+        <div class="content"><a href="chain.html"><button>接龙</button></a></div>
+        <div class="content"><a href="mine.html"><button>我的</button></a></div>
     </div>
 
-    
-    <div id="pomodoro" class="content">
-        <button id="pomodoro-toggle" title="隐藏/显示"></button>
+    <div id="pomodoro" class="content hide" style="margin: 0 25px;">
+        <button id="pomodoro-toggle" class="vertical" title="隐藏/显示"></button>
         <button id="pomodoroPrev" class="pomodoro-small">&lt;&lt;</button>
         <button id="pomodoroMinus" class="pomodoro-small">-</button>
         <span id="pomodoroTime" style="font-size: 20px;">25:00</span>
@@ -44,7 +64,5 @@
         <button id="pomodoroReset">重置</button>
     </div>
 
-    <script src="js/Index.js"></script>
-    
 </body>
 </html>

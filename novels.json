@@ -1,0 +1,23 @@
+[
+  {
+    "id": "dragon_and_flower",
+    "title": "龙与花",
+    "cover": "covers/01.jpg",
+    "desc": "白森林中隐藏着古老的诅咒……",
+    "folder": "dragon and flower",
+    "chapters": [
+      { "file": "chapter1.md", "title": "第一章" },
+      { "file": "chapter2.md", "title": "第二章" }
+    ]
+  },
+  {
+    "id": "cyberpunk",
+    "title": "雨",
+    "cover": "covers/02.jpg",
+    "desc": "赛博朋克世界观的小说",
+    "folder": "cyberpunk",
+    "chapters": [
+      { "file": "chapter1.md", "title": "第一章 " }
+    ]
+  }
+]

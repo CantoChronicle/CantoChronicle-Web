@@ -1,0 +1,10 @@
+@font-face {
+    font-family: 'FZSS';
+    src: url('../FangZhengShuSongJianTi-1.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+/* 全局基础重置（仅少量） */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { max-width: 100%; overflow-x: hidden; }
+body { font-family: 'FZSS', sans-serif; }
