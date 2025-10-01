@@ -1,4 +1,4 @@
-window.onload = function() {
+window.addEventListener("load", function() {
     // 安全地清理遗留的留言板数据（localStorage）
     try { localStorage.removeItem('guestbook'); } catch (e) { /* ignore */ }
 
@@ -311,7 +311,7 @@ window.onload = function() {
     // 关闭 pomodoroRoot 的 if 块
     }
     updatePomodoroDisplay();
-};
+});
 // 防御性清理：如果页面上仍有指向 dragon_and_flower.html 或 detail.html?id=dragon_and_flower 的链接（例如 live-server 注入或缓存导致），在 DOMContentLoaded 后把它们替换为纯文本
 document.addEventListener('DOMContentLoaded', function () {
     try {

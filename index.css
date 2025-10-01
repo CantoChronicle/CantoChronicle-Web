@@ -367,6 +367,7 @@ body {
     align-items: center; /* 垂直居中内容 */
     justify-content: center; /* 水平居中内容 */
     z-index: 999; /* 保证在最上层 */
+    -webkit-backdrop-filter: blur(8px); /* 半透明磨砂效果，可选 */
     backdrop-filter: blur(8px); /* 半透明磨砂效果，可选 */
 }
 
