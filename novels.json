@@ -11,13 +11,14 @@
     ]
   },
   {
-    "id": "cyberpunk",
-    "title": "雨",
+    "id": "space_potato",
+    "title": "太空土豆",
     "cover": "covers/02.jpg",
-    "desc": "赛博朋克世界观的小说",
-    "folder": "cyberpunk",
+    "desc": "一只流浪在太空的土豆学会了将土豆文刻在土豆皮上后......",
+    "folder": "space potato",
     "chapters": [
-      { "file": "chapter1.md", "title": "第一章 " }
+      { "file": "chapter1.md", "title": "第一章 " },
+      { "file": "chapter2.md", "title": "第二章" }
     ]
   }
 ]
