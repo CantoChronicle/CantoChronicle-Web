@@ -21,7 +21,9 @@
     "chapters": [
       { "file": "chapter1.md", "title": "第一章 " },
       { "file": "chapter2.md", "title": "第二章" },
-      { "file": "chapter3.md", "title": "第三章" }
+      { "file": "chapter3.md", "title": "第三章" },
+      { "file": "chapter4.md", "title": "第四章" },
+      { "file": "chapter5.md", "title": "第五章" }
     ]
   }
 ]
